@@ -30,43 +30,43 @@ def rules
 			puts 'Dealer hits on 16 and stands on anything above 16'
 			puts  "Pressing 'h' asks the dealer to Hit and 's' to Stand"
 		else  #User doesn't want to read instructions
-		
-		end 
+
+		end
 end
-		
-def dealCards 
+
+def dealCards
     if user_money <= 0
     	 put "You've gone bust!"
     else
 		put "Dealing cards"
 		current_card = card_deck.sample
-    	card_deck.delete_at(Array.index(current_card)) #removes chosen card from array (first instance of it)
-	end 
+    	card_deck.delete_at(Array.index(current_card)) #remove chosen card from array (first instance of it)
+	end
 end
 
 def isBust(x)
-	if x > 21 
+	if x > 21
 		return true
-	else 
+	else
 		return false
 end
 
 
-def start 
+def start
 
-       	 
+
 end
 
 def hitOrStand
-	put "Your count is: #{user_count} , to HIT type'h' or to STAND type 's' "    
+	put "Your count is: #{user_count} , to HIT type'h' or to STAND type 's' "
    	 ans = $stdin.gets.chomp
-   	 	if ans == "h" 
+   	 	if ans == "h"
    	 		puts "You chose to hit. Good luck."
    	 		return true
-    	else 
+    	else
     		puts "You chose to stand. Good luck."
     		return false
-    	end 
+    	end
 end
 
 def dealCard(x)
@@ -81,7 +81,7 @@ def returnCount (x)
 		return x.to_i
     elsif card_facecard.include(x)
    		return 10
-    else 
+    else
     	return 11
 end
 
@@ -90,17 +90,6 @@ def ace (currentCount) #ace can be 1 or 11
 		#end game
 	elsif !isBust(currentCount+1) && isBust(currentCount+11)
 		return 1 #ace = 3 as 11 is too much
-	else 
+	else
 		#returns two scores 1 or 11
-end 
-			
-	
-	
-	
-	
-	
-	
-	
-	
-	
-		 
+end
