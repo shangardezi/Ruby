@@ -1,0 +1,2 @@
+Now let's do a few more things with files. We'll write a Ruby script to copy one file to another. It'll be very short but will give you ideas about other things you can do with files.
+
