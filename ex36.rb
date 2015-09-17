@@ -23,6 +23,8 @@ def rules()
 	puts 'Do you want to read the rules and instructions? (y/n)'
 	instructions = $stdin.gets.chomp
 		if instructions == 'y' || instructions == 'Y' #Check if user wants to read instructions
+			checkmark = "\u1f0ax"
+			puts checkmark.force_encoding('utf-8') 
 			puts '::: RULES & INSTRUCTIONS :::'
 			puts 'Goal is to get a higher score than the dealer and win some monies!'
 			puts "£100 is on the house, use it wisely!"
@@ -67,8 +69,12 @@ def hit_me()
 	deal_card($user_count)
 	if is_bust($user_count) && !$two_counts
 		puts "You lost! Woops. Your count was #{$user_count}"
-	elsif is_bust($user_count) && $two_counts
+	elsif $two_counts
+		t = $user_count+1
+		s = $user_count+11
+		puts "Your count is: #{t} or #{s}, to HIT type 'h' or to STAND type 's' "
 		hit_or_stand()
+	
 	end
 end
 
