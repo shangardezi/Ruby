@@ -62,6 +62,7 @@ def first_round()
     hit_or_stand()
 	end
 end
+
 def hit_me()
 	deal_card($user_count)
 	if is_bust($user_count) && !$two_counts
