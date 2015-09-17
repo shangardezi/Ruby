@@ -1,26 +1,26 @@
 # BlackJack v1 - Simple BlackJack game made by Shan Gardezi
 
-card_deck = ['2','3','4','5','6','7','8','9','10','Jack','Queen','King', 'Ace'
-            , '2','3','4','5','6','7','8','9','10','Jack','Queen','King', 'Ace'
-            , '2','3','4','5','6','7','8','9','10','Jack','Queen','King', 'Ace'
-            , '2','3','4','5','6','7','8','9','10','Jack','Queen','King', 'Ace']
+$card_deck = ['2','3','4','5','6','7','8','9','10','Jack','Queen','King', 'Ace' ,'2','3','4','5','6','7','8','9','10','Jack','Queen','King', 'Ace','2','3','4','5','6','7','8','9','10','Jack','Queen','King', 'Ace' , '2','3','4','5','6','7','8','9','10','Jack','Queen','King', 'Ace']
 
-card_facevalue = ['2','3','4','5','6','7','8','9']
-card_facecard = ['10','Jack','Queen','King']
+$card_facevalue = ['2','3','4','5','6','7','8','9']
+$card_facecard = ['10','Jack','Queen','King']
 
-user_money = 100
-user_count = 0
-user_turn = false
+$user_money = 100
+$user_count = 0
+$user_turn = false
 
-dealer_turn = false
-dealer_count = 0
-count_value = 0
+$dealer_turn = false
+$dealer_count = 0
+$dealer_stand = false
+$dealer_bust = false
+$count_value = 0
 
 $current_card = ""
 $ace = false
+$two_counts = false
 
-def rules
-	put 'Do you want to read the rules and instructions? (y/n)'
+def rules()
+	puts 'Do you want to read the rules and instructions? (y/n)'
 	instructions = $stdin.gets.chomp
 		if instructions == 'y' || instructions == 'Y' #Check if user wants to read instructions
 			puts '::: RULES & INSTRUCTIONS :::'
@@ -29,67 +29,136 @@ def rules
 			puts "BlackJack (Score of 21) pays 3:2"
 			puts 'Dealer hits on 16 and stands on anything above 16'
 			puts  "Pressing 'h' asks the dealer to Hit and 's' to Stand"
+			print 'Press any key to continue....'
+			first_round()
 		else  #User doesn't want to read instructions
-
+			first_round()
 		end
 end
 
-def dealCards
-    if user_money <= 0
-    	 put "You've gone bust!"
-    else
-		put "Dealing cards"
-		current_card = card_deck.sample
-    	card_deck.delete_at(Array.index(current_card)) #remove chosen card from array (first instance of it)
-	end
-end
-
-def isBust(x)
+def is_bust(x)
 	if x > 21
 		return true
 	else
 		return false
+	end
 end
 
 
-def start
-
-
+def first_round()
+	deal_card($user_count)
+	puts "Your count is #{$user_count} "
+	sleep(1.0/2.0)
+    deal_card($dealer_count)
+    puts "Dealer's count is #{$dealer_count} "
+    sleep(1.0/2.0)
+    deal_card($user_count)
+    puts "Your count is #{$user_count} "
+    sleep(1.0/2.0)
+    deal_card($dealer_count)
+    if $user_count == 21 
+    	check_score()
+    else
+    hit_or_stand()
+	end
+end
+def hit_me()
+	deal_card($user_count)
+	if is_bust($user_count) && !$two_counts
+		puts "You lost! Woops. Your count was #{$user_count}"
+	elsif is_bust($user_count) && $two_counts
+		hit_or_stand()
+	end
 end
 
-def hitOrStand
-	put "Your count is: #{user_count} , to HIT type'h' or to STAND type 's' "
+
+def hit_or_stand()
+	puts "Your count is: #{$user_count} , to HIT type'h' or to STAND type 's' "
    	 ans = $stdin.gets.chomp
    	 	if ans == "h"
    	 		puts "You chose to hit. Good luck."
-   	 		return true
+   	 		hit_me()
     	else
     		puts "You chose to stand. Good luck."
-    		return false
+    		check_score()
     	end
 end
 
-def dealCard(x)
-	current_card = card_deck.sample
-    card_deck.delete_at(Array.index(current_card)) #removes chosen card from array (first instance of it)
-    x += returnCount(current_card)  #Add count of card to user/dealers count
-end
 
 
-def returnCount (x)
-	if card_facevalue.include(x)
-		return x.to_i
-    elsif card_facecard.include(x)
-   		return 10
+def deal_card(x) #randomly chooses a card from the deck
+	$current_card = $card_deck.sample
+	$card_deck.delete($current_card)#removes chosen card from array (first instance of it)
+    if x == $user_count
+    	puts "Your card is: #{$current_card}"
+    	    $user_count += return_count($current_card,$user_count)  #Add count of card to user/dealers count
     else
-    	return 11
+    	puts "Dealers card is: #{$current_card}"
+    	    $dealer_count += return_count($current_card,$dealer_count)  #Add count of card to user/dealers count
+
+    end
 end
 
-def ace (currentCount) #ace can be 1 or 11
-	if  isBust(currentCount+1) && isBust(currentCount+11)
-		#end game
-	elsif !isBust(currentCount+1) && isBust(currentCount+11)
-		return 1 #ace = 3 as 11 is too much
+def is_bust(x)
+	if x > 21
+		return true
 	else
-		#returns two scores 1 or 11
+		return false
+	end
 end
+
+def check_winner()
+	if !is_bust($user_count) && $user_count > $dealer_count && !is_bust($dealer_count)
+		#userwins
+		puts "You have won this round!!"
+	elsif !is_bust($user_count) && $dealer_count > $user_count && !is_bust($dealer_count)
+		#dealerwins
+		puts "dealer has won!"
+	elsif is_bust($user_count)
+		#bust
+		puts "Bust! You lose"
+	elsif $user_count == $dealer_count && !is_bust($user_count) && !is_bust($dealer_count)
+		#push
+		puts "PUSH"
+	end
+end
+
+
+def check_score()
+	if $dealer_count > 16 && $dealer_count <= 21
+		$dealer_stand = true
+		$dealer_bust = false
+		check_winner()
+	elsif $dealer_count <= 16
+		$dealer_stand = false
+		$dealer_bust = false
+		deal_card($dealer_count)
+		check_score()
+	else
+		$dealer_bust = true
+		puts "DEALER BUST"
+	end
+end
+
+def return_count(x,z) #returns the value of the chosen card.
+	if $card_facevalue.index(x)
+		y = x.to_i
+		return y
+    elsif $card_facecard.index(x)
+   		return 10
+    else #Ace has been dealt.
+    	$ace = true
+    	if z+1 <=21  && z+11 <=21 #Ace in this case can be 1 or 11
+			$two_counts = true	
+			puts 'Your count is: #{$user_count + 1} or #{$user_count + 11}'
+			return 11		
+		elsif z+1 <=21 && z+11 > 21 #Ace equals 1
+			$two_counts = false 
+			return 1
+		else
+			#bust
+		end 
+	end
+end
+
+rules()
