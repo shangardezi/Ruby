@@ -25,13 +25,16 @@ def rules()
 		if instructions == 'y' || instructions == 'Y' #Check if user wants to read instructions
 			checkmark = "\u1f0ax"
 			puts checkmark.force_encoding('utf-8') 
+			puts '::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'
 			puts '::: RULES & INSTRUCTIONS :::'
 			puts 'Goal is to get a higher score than the dealer and win some monies!'
 			puts "£100 is on the house, use it wisely!"
 			puts "BlackJack (Score of 21) pays 3:2"
 			puts 'Dealer hits on 16 and stands on anything above 16'
 			puts  "Pressing 'h' asks the dealer to Hit and 's' to Stand"
+			puts '::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'
 			print 'Press any key to continue....'
+			$stdin.gets.chomp
 			first_round()
 		else  #User doesn't want to read instructions
 			first_round()
@@ -56,19 +59,22 @@ def first_round()
     deal_card($user_count)
     puts "Your count is #{$user_count} "
     sleep(1.0/2.0)
-    deal_card($dealer_count)
-    if $user_count == 21 
+    if $user_count == 21
+       	deal_card($dealer_count) 
     	check_score()
     else
+    	 deal_card($dealer_count)
    		 hit_or_stand()
+
 	end
 end
 
 def hit_me()
 	deal_card($user_count)
 	if is_bust($user_count) && !$two_counts
+		puts "Your count is: #{$user_count}"
 		puts "You lost! Woops. Your count was #{$user_count}"
-	elsif $two_counts && !$is_bust
+	elsif $two_counts && !is_bust($user_count)
 		t = $user_count+1
 		s = $user_count+11
 		puts "Your count is: #{t} or #{s}, to HIT type 'h' or to STAND type 's' "
@@ -104,7 +110,6 @@ def deal_card(x) #randomly chooses a card from the deck
     	puts "Your card is: #{$current_card}"
     	    $user_count += return_count($current_card,$user_count)  #Add count of card to user/dealers count
     else
-    	puts "Dealers card is: #{$current_card}"
     	    $dealer_count += return_count($current_card,$dealer_count)  #Add count of card to user/dealers count
 
     end
@@ -145,6 +150,7 @@ def check_score()
 		$dealer_stand = false
 		$dealer_bust = false
 		deal_card($dealer_count)
+		puts "Dealer count is: #{$dealer_count}"
 		check_score()
 	else
 		$dealer_bust = true
@@ -162,7 +168,9 @@ def return_count(x,z) #returns the value of the chosen card.
     	$ace = true
     	if z+1 <=21  && z+11 <=21 #Ace in this case can be 1 or 11
 			$two_counts = true	
-			puts 'Your count is: #{$user_count + 1} or #{$user_count + 11}'
+			t = $user_count+1
+			s = $user_count+11
+			puts "Your count is: #{t} or #{s}, to HIT type 'h' or to STAND type 's' "			
 			return 11		
 		elsif z+1 <=21 && z+11 > 21 #Ace equals 1
 			$two_counts = false 
@@ -171,6 +179,13 @@ def return_count(x,z) #returns the value of the chosen card.
 			#bust
 		end 
 	end
+	
+ if z == $user_count
+    	puts "Your card is: #{$current_card}"
+    else
+    	puts "Dealers card is: #{$current_card}"
+
+    end
 end
 
 rules()
