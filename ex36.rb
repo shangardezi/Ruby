@@ -45,8 +45,7 @@ def is_bust(x)
 		return false
 	end
 end
-
-
+	
 def first_round()
 	deal_card($user_count)
 	puts "Your count is #{$user_count} "
@@ -61,7 +60,7 @@ def first_round()
     if $user_count == 21 
     	check_score()
     else
-    hit_or_stand()
+   		 hit_or_stand()
 	end
 end
 
@@ -69,12 +68,13 @@ def hit_me()
 	deal_card($user_count)
 	if is_bust($user_count) && !$two_counts
 		puts "You lost! Woops. Your count was #{$user_count}"
-	elsif $two_counts
+	elsif $two_counts && !$is_bust
 		t = $user_count+1
 		s = $user_count+11
 		puts "Your count is: #{t} or #{s}, to HIT type 'h' or to STAND type 's' "
 		hit_or_stand()
-	
+	else
+		hit_or_stand()
 	end
 end
 
@@ -85,6 +85,10 @@ def hit_or_stand()
    	 	if ans == "h"
    	 		puts "You chose to hit. Good luck."
    	 		hit_me()
+    	elsif ans == "s" && $two_counts
+    		$user_count = $user_count + 11
+    		puts "You chose to stand. Good luck."
+    		check_score()
     	else
     		puts "You chose to stand. Good luck."
     		check_score()
@@ -133,6 +137,7 @@ end
 
 def check_score()
 	if $dealer_count > 16 && $dealer_count <= 21
+		puts "Dealer stands"
 		$dealer_stand = true
 		$dealer_bust = false
 		check_winner()
