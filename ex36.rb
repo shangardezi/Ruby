@@ -8,6 +8,7 @@ $card_facecard = ['10','Jack','Queen','King']
 $user_money = 100
 $user_count = 0
 $user_turn = false
+$end_game = false
 
 $dealer_turn = false
 $dealer_count = 0
@@ -63,8 +64,9 @@ def first_round()
        	deal_card($dealer_count) 
     	check_score()
     else
-    	 deal_card($dealer_count)
    		 hit_or_stand()
+   		 deal_card($dealer_count)
+
 
 	end
 end
@@ -79,11 +81,36 @@ def hit_me()
 		s = $user_count+11
 		puts "Your count is: #{t} or #{s}, to HIT type 'h' or to STAND type 's' "
 		hit_or_stand()
-	else
-		hit_or_stand()
 	end
+		check_winner()
 end
 
+def mad_loop()
+reset_values()
+	while !$end_game
+		first_round()
+	end
+exit(0)
+end
+	
+	
+def reset_values()
+
+	$user_count = 0
+	$user_turn = false
+	$end_game = false
+	
+	$dealer_turn = false
+	$dealer_count = 0
+	$dealer_stand = false
+	$dealer_bust = false
+	$count_value = 0
+
+	$current_card = ""
+	$ace = false
+	$two_counts = false
+
+end
 
 def hit_or_stand()
 	puts "Your count is: #{$user_count} , to HIT type'h' or to STAND type 's' "
@@ -109,7 +136,8 @@ def deal_card(x) #randomly chooses a card from the deck
     if x == $user_count
     	puts "Your card is: #{$current_card}"
     	    $user_count += return_count($current_card,$user_count)  #Add count of card to user/dealers count
-    else
+    else 
+    	puts "Dealer's card is: #{$current_card}"
     	    $dealer_count += return_count($current_card,$dealer_count)  #Add count of card to user/dealers count
 
     end
@@ -130,6 +158,9 @@ def check_winner()
 	elsif !is_bust($user_count) && $dealer_count > $user_count && !is_bust($dealer_count)
 		#dealerwins
 		puts "dealer has won!"
+	elsif !is_bust($user_count) && is_bust($dealer_count)
+		#userwins
+		puts "You have won this round!!!"
 	elsif is_bust($user_count)
 		#bust
 		puts "Bust! You lose"
@@ -137,6 +168,15 @@ def check_winner()
 		#push
 		puts "PUSH"
 	end
+	
+	puts "Play again...? (y/n)"
+	y = $stdin.gets.chomp
+	if y == "y" 
+		$end_game = false
+	else
+		exit(0)
+	end
+	mad_loop()
 end
 
 
@@ -154,7 +194,8 @@ def check_score()
 		check_score()
 	else
 		$dealer_bust = true
-		puts "DEALER BUST"
+		
+		check_winner()
 	end
 end
 
@@ -168,10 +209,15 @@ def return_count(x,z) #returns the value of the chosen card.
     	$ace = true
     	if z+1 <=21  && z+11 <=21 #Ace in this case can be 1 or 11
 			$two_counts = true	
-			t = $user_count+1
-			s = $user_count+11
-			puts "Your count is: #{t} or #{s}, to HIT type 'h' or to STAND type 's' "			
-			return 11		
+			t = z+1
+			s = z+11
+			if z == $user_count
+				puts "Your count is: #{t} or #{s} "	
+			else 
+				puts "Dealer's count is: #{t} or #{s} "	
+			end	
+			
+			return 11	
 		elsif z+1 <=21 && z+11 > 21 #Ace equals 1
 			$two_counts = false 
 			return 1
